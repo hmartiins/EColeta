@@ -1,11 +1,7 @@
 import knex from 'knex';
-import path from 'path';
 
-const connection = knex({
-  client: 'mysql',
-  connection: {
-    filename: path.resolve(__dirname, 'database.mysql'),
-  },
-});
+const configurations = require('../../knexfile.ts');
+
+const connection = knex(configurations.development);
 
 export default connection;
