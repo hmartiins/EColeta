@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{ useState, useEffect } from 'react';
 import Constants from 'expo-constants';
 import { useNavigation } from '@react-navigation/native';
 import { Feather as Icon } from '@expo/vector-icons'
@@ -6,7 +6,24 @@ import { Text, View, StyleSheet, TouchableOpacity, ScrollView } from 'react-nati
 import { SvgUri } from 'react-native-svg';
 import MapView, { Marker } from 'react-native-maps';
 
+import api from '../../services/api';
+
+interface IItem{
+  id: number;
+  title: string;
+  imgUrl: string;
+}
+
 const Points = () =>{
+  const [items, setItems] = useState<IItem[]>([]);
+  const [selectedItems, setSelectedItems] = useState<number[]>([]);
+  
+  useEffect(() => {
+    api.get('items').then(response =>{
+      setItems(response.data);
+    }); 
+  }, []);
+
   const navigation = useNavigation();
   
   function handleNavigationBack(){
@@ -15,6 +32,17 @@ const Points = () =>{
   function handleNavigationToDetail(){
     navigation.navigate('Detail');
   }  
+  function handleSelectItem(id: number){
+    const alredySelected = selectedItems.findIndex(item => item === id);
+
+    if(alredySelected >= 0){
+      const filteredItems = selectedItems.filter(item => item !== id);
+      
+      setSelectedItems(filteredItems);
+    } else{
+      setSelectedItems([...selectedItems, id]);
+    }
+  }
   return(
     <>
       <View style={styles.container}>
@@ -58,10 +86,20 @@ const Points = () =>{
           showsHorizontalScrollIndicator={false} 
           contentContainerStyle={{paddingHorizontal: 20}}
         >
-          <TouchableOpacity style={styles.item}>
-            <SvgUri width={42} height={42} uri="http://192.168.0.104:3333/uploads/lampadas.svg"/>
-            <Text style={styles.itemTitle}>Lampadas</Text>
-          </TouchableOpacity>
+          {items.map(item =>(
+            <TouchableOpacity 
+              onPress={() => handleSelectItem(item.id)} 
+              key={String(item.id)} 
+              style={[
+                styles.item,
+                selectedItems.includes(item.id) ? styles.selectedItem : {}
+              ]}
+              activeOpacity={0.6}
+            >
+              <SvgUri width={42} height={42} uri={item.imgUrl}/>
+              <Text style={styles.itemTitle}>{item.title}</Text>
+            </TouchableOpacity>
+          ))}
         </ScrollView>
       </View>
     </>

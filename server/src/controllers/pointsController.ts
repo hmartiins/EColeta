@@ -34,7 +34,7 @@ class PointsController {
     const trx = await knex.transaction();
   
     const point = {
-      image: 'hi',
+      image: 'https://blog.rcky.com.br/wp-content/uploads/2020/01/minimercado.jpg',
       name, 
       email, 
       whatsapp, 

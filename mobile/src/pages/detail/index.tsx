@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { Feather as Icon, FontAwesome } from '@expo/vector-icons';
 import Constants from 'expo-constants';
